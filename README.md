@@ -1,4 +1,4 @@
-# Devcore Group AI Assistant
+# DevCore Group AI Assistant
 
 Asistente conversacional basado en React y Gemini API, diseñado para ayudar a los usuarios a interactuar con inteligencia artificial de manera sencilla.
 
