@@ -9,9 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@google/genai": "latest",
+    "bootstrap-icons": "^1.13.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "@google/genai": "latest",
     "react-markdown": "^9.0.0",
     "remark-gfm": "^4.0.0"
   },
