@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "node index.js"
+    "start": "vite preview --port $PORT --host"
   },
   "dependencies": {
     "@google/genai": "latest",
