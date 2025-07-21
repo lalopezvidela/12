@@ -10,9 +10,9 @@ type LocaleStrings = {
 export const locales: LocaleStrings = {
   // App Header
   headerTitle: {
-    en: 'Core',
-    es: 'Core',
-    pt: 'Core',
+    en: 'LOX',
+    es: 'LOX',
+    pt: 'LOX',
   },
   headerSubtitle: {
     en: 'Powered by Gemini',
@@ -20,9 +20,9 @@ export const locales: LocaleStrings = {
     pt: 'Desenvolvido com Gemini',
   },
   botName: {
-    en: 'Core',
-    es: 'Core',
-    pt: 'Core',
+    en: 'lox',
+    es: 'lox',
+    pt: 'lox',
   },
 
   // Language Selector

@@ -207,9 +207,26 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="bg-gray-900 text-gray-200 font-sans min-h-screen flex flex-col items-center justify-center p-4 selection:bg-[#86A869] selection:text-white">
-      <div className="w-full max-w-2xl h-[95vh] max-h-[800px] bg-slate-800 rounded-2xl shadow-2xl flex flex-col border border-slate-700">
-        <header className="flex items-center p-4 border-b border-slate-700 flex-shrink-0">
+    <div className="bg-black text-white font-sans min-h-screen flex flex-col items-center justify-center p-4 selection:bg-pink-500 selection:text-white">
+      <div className="w-full max-w-2xl h-[95vh] max-h-[800px] bg-pink-900 rounded-2xl shadow-2xl flex flex-col border-4 border-pink-500 neon-border" tabIndex={0}>
+    <style>{`
+      @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap');
+      .neon-border {
+        box-shadow: 0 0 32px 8px #ec4899, 0 0 64px 16px #fff4, 0 0 8px 2px #fff8;
+        border-color: #ec4899;
+        transition: box-shadow 0.3s, border-color 0.3s;
+      }
+      .neon-border .contact-app-btn .contact-app-icon {
+        color: #a1a1aa;
+        transition: color 0.3s;
+      }
+      .neon-border:hover .contact-app-btn:hover .contact-app-icon,
+      .neon-border:focus-within .contact-app-btn:focus .contact-app-icon {
+        color: var(--brand-color) !important;
+        filter: none;
+      }
+    `}</style>
+        <header className="flex items-center p-4 border-b border-pink-700 flex-shrink-0">
           <svg className="w-10 h-10 mr-4" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-label="DevCore Group Logo">
             {/* Grey Gear */}
             <g transform="translate(-10, 10)">
@@ -244,13 +261,22 @@ const App: React.FC = () => {
               <tspan fill="#6B7280">GROUP</tspan>
             </text>
           </svg>
-          <div>
-            <h1 className="text-xl font-bold text-gray-100">{language ? locales.headerTitle[language] : 'Core'}</h1>
-            <p className="text-sm text-[#86A869] font-medium">{language ? locales.headerSubtitle[language] : 'Powered by Gemini'}</p>
+          <div className="w-full flex flex-col items-center justify-center text-center">
+            <h1
+              className="text-4xl font-extrabold tracking-widest text-white uppercase"
+              style={{
+                letterSpacing: '0.25em',
+                fontFamily: `'Montserrat', 'Poppins', 'Inter', Arial, sans-serif`,
+                textShadow: '0 0 16px #ec4899, 0 0 32px #fff2',
+              }}
+            >
+              {language ? locales.headerTitle[language] : 'LOX'}
+            </h1>
+            <p className="text-sm text-pink-400 font-medium mt-1">{language ? locales.headerSubtitle[language] : 'Powered by Gemini'}</p>
           </div>
         </header>
         
-        <div className="flex-1 flex flex-col overflow-hidden bg-slate-800">
+        <div className="flex-1 flex flex-col overflow-hidden bg-pink-900">
           {renderContent()}
         </div>
       </div>

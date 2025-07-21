@@ -41,8 +41,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, onSendMessage, isLoa
       <div
         className={`px-4 py-3 rounded-2xl max-w-md md:max-w-lg lg:max-w-xl break-words shadow-sm ${
           isBot
-            ? 'bg-slate-700 text-gray-200 rounded-bl-none'
-            : 'bg-[#86A869] text-white rounded-br-none'
+            ? 'bg-black text-white rounded-bl-none'
+            : 'bg-pink-500 text-white rounded-br-none'
         }`}
       >
         <ReactMarkdown 
@@ -66,7 +66,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, onSendMessage, isLoa
                 key={index}
                 onClick={() => handleSuggestionClick(suggestion)}
                 disabled={!isLastBotMessageWithOptions || isLoading}
-                className="px-3 py-2 text-sm text-left rounded-lg transition-all duration-200 text-gray-200 bg-gradient-to-r from-slate-900 to-violet-700 hover:to-violet-600 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-700 focus:ring-violet-500 disabled:bg-gradient-none disabled:bg-slate-600 disabled:text-gray-400 disabled:cursor-not-allowed disabled:scale-100"
+                className="px-3 py-2 text-sm text-left rounded-lg transition-all duration-200 text-white bg-gradient-to-r from-pink-600 to-pink-400 hover:to-pink-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-pink-500 disabled:bg-gradient-none disabled:bg-pink-200 disabled:text-pink-400 disabled:cursor-not-allowed disabled:scale-100"
               >
                 {suggestion}
               </button>
@@ -80,7 +80,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, onSendMessage, isLoa
 
 const TypingIndicator: React.FC = () => (
     <div className="flex items-end gap-2 justify-start">
-        <div className="px-4 py-3 rounded-2xl bg-slate-700 text-gray-200 rounded-bl-none shadow-sm">
+        <div className="px-4 py-3 rounded-2xl bg-black text-white rounded-bl-none shadow-sm">
             <div className="flex items-center justify-center space-x-1">
                 <div className="w-2 h-2 bg-slate-500 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
                 <div className="w-2 h-2 bg-slate-500 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
@@ -124,7 +124,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, 
   const isFormDisabled = isLoading || isCompleted;
 
   return (
-    <div className="flex flex-col h-full bg-slate-800">
+    <div className="flex flex-col h-full bg-pink-900">
       <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
         {messages.map((msg, index) => (
           <ChatMessage 
@@ -138,7 +138,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, 
         {isLoading && <TypingIndicator />}
         <div ref={messagesEndRef} />
       </div>
-      <div className="p-4 border-t border-slate-700 bg-slate-800">
+      <div className="p-4 border-t border-pink-700 bg-pink-900">
         <form onSubmit={handleSend} className="flex items-center space-x-3">
           <input
             type="text"
@@ -146,13 +146,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, 
             onChange={(e) => setInput(e.target.value)}
             placeholder={isCompleted ? completedPlaceholder : inputPlaceholder}
             aria-label="Chat input"
-            className="flex-1 w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-full focus:outline-none focus:ring-2 focus:ring-[#86A869] text-gray-200 placeholder-gray-500 transition disabled:cursor-not-allowed"
+            className="flex-1 w-full px-4 py-3 bg-black border border-pink-700 rounded-full focus:outline-none focus:ring-2 focus:ring-pink-500 text-white placeholder-pink-200 transition disabled:cursor-not-allowed"
             disabled={isFormDisabled}
           />
           <button
             type="submit"
             aria-label="Send message"
-            className="bg-[#86A869] text-white rounded-full p-3 hover:bg-[#769659] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-[#86A869] transition-transform transform hover:scale-110 disabled:bg-slate-600 disabled:cursor-not-allowed disabled:transform-none"
+            className="bg-pink-500 text-white rounded-full p-3 hover:bg-pink-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-pink-500 transition-transform transform hover:scale-110 disabled:bg-pink-200 disabled:cursor-not-allowed disabled:transform-none"
             disabled={isFormDisabled || !input.trim()}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">

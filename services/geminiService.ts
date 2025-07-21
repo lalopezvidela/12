@@ -4,13 +4,13 @@ import { getSystemInstruction } from '../constants';
 import { Language } from "../types";
 import { locales } from "../i18n/locales";
 
-// The API key is injected via environment variables.
-const API_KEY = process.env.API_KEY;
+// The API key is injected via Vite environment variables.
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 if (!API_KEY) {
   // This will be visible in the console if the API_KEY is not set.
   // The app will continue to run but Gemini calls will fail.
-  console.error("Gemini API key not found. Please set the API_KEY environment variable.");
+  console.error("Gemini API key not found. Please set VITE_GEMINI_API_KEY in your .env file.");
 }
 
 const ai = new GoogleGenAI({ apiKey: API_KEY! });
