@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview --port 3000 --host",
-    "start": "vite preview --port $PORT --host"
+    "start": "cross-env vite preview --port $PORT --host"
   },
   "dependencies": {
     "@google/genai": "latest",
@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
+    "cross-env": "^7.0.3",
     "typescript": "~5.7.2",
     "vite": "^6.2.0"
   }
