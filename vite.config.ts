@@ -12,6 +12,15 @@ export default defineConfig(({ mode }) => {
         alias: {
           '@': path.resolve(__dirname, '.'),
         }
+      },
+      server: {
+        cors: {
+          origin: [
+            'https://lox-6lxs.onrender.com',
+            'http://localhost:3000'
+          ],
+          credentials: true
+        }
       }
     };
 });
