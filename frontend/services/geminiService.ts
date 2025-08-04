@@ -8,9 +8,7 @@ import { locales } from "../i18n/locales";
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 if (!API_KEY) {
-  // This will be visible in the console if the API_KEY is not set.
-  // The app will continue to run but Gemini calls will fail.
-  console.error("Gemini API key not found. Please set VITE_GEMINI_API_KEY in your .env file.");
+  throw new Error("Falta la clave API en entorno: VITE_GEMINI_API_KEY");
 }
 
 const ai = new GoogleGenAI({ apiKey: API_KEY! });
@@ -49,7 +47,7 @@ export const geminiService = {
   sendMessage: async (chat: Chat, message: string): Promise<string> => {
     try {
       const result: GenerateContentResponse = await chat.sendMessage({ message });
-      const text = result.text;
+      const text = result.text ?? getGeminiConnectionError();
       return text;
     } catch (error) {
       console.error("Gemini API Error:", error);

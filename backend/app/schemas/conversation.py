@@ -23,9 +23,7 @@ class Message(MessageBase):
     id: int
     conversation_id: int
     timestamp: datetime
-
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 class ConversationBase(BaseModel):
     language: Language
@@ -42,9 +40,7 @@ class Conversation(ConversationBase):
     started_at: datetime
     ended_at: Optional[datetime] = None
     messages: List[Message] = []
-
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 class ChatMessage(BaseModel):
     message: str

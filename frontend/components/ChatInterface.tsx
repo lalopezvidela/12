@@ -24,8 +24,9 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, onSendMessage, isLoa
 
   const { mainText, suggestions } = useMemo(() => {
     const buttonRegex = /👉\s*\[([^\]]+)\]/g;
-    const suggestions = [...message.text.matchAll(buttonRegex)].map(match => match[1]);
-    const mainText = message.text.replace(buttonRegex, '').trim();
+    const text = typeof message.text === 'string' ? message.text : '';
+    const suggestions = [...text.matchAll(buttonRegex)].map(match => match[1]);
+    const mainText = text.replace(buttonRegex, '').trim();
     return { mainText, suggestions };
   }, [message.text]);
 
