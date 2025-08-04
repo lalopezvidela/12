@@ -9,6 +9,6 @@ class UserOut(UserCreate):
     id: int
 
     class Config:
-        from_attributes = True
+        orm_mode = True
 class UserOut(UserCreate):
     id: int
