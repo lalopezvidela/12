@@ -1,21 +1,20 @@
-
 import React, { useState, useCallback, useEffect } from 'react';
-import type { Chat, Content } from '@google/genai';
 
 import LeadCaptureForm from './components/LeadCaptureForm';
 import ChatInterface from './components/ChatInterface';
 import LanguageSelector from './components/LanguageSelector';
 import { User, Message, Language, ContactMethod } from './types';
 import { backendService } from './services/backendService';
-import { geminiService } from './services/geminiService';
 import { locales } from './i18n/locales';
+// import { AccountMenu } from './components/AccountMenu';
+// import { SettingsMenu } from './components/SettingsMenu';
 
 type FlowState = 'chatting' | 'awaiting_email' | 'completed';
 
 const App: React.FC = () => {
   const [language, setLanguage] = useState<Language | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [chatSession, setChatSession] = useState<Chat | null>(null);
+  const [conversationId, setConversationId] = useState<number | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [flowState, setFlowState] = useState<FlowState>('chatting');
@@ -36,19 +35,26 @@ const App: React.FC = () => {
     setIsLoading(true);
 
     try {
-      await backendService.saveLead(newUser);
+      // Save user to backend and get the user ID
+      const savedUser = await backendService.saveLead(newUser);
+      const userWithId = { ...newUser, id: savedUser.id };
+      setUser(userWithId);
       
-      const newChat = geminiService.startChat([], language, newUser.name);
-      setChatSession(newChat);
-
+      // Send initial message through backend
       const seedMessage = locales.initialBotMessageSeed[language].replace('{name}', newUser.name);
+      const chatResponse = await backendService.sendChatMessage(
+        savedUser.id,
+        seedMessage,
+        language
+      );
       
-      const botResponseText = await geminiService.sendMessage(newChat, seedMessage);
+      // Set conversation ID for future messages
+      setConversationId(chatResponse.conversationId);
       
       const botMessage: Message = {
-        id: `bot-${Date.now()}`,
+        id: `bot-${chatResponse.messageId}`,
         sender: 'bot',
-        text: botResponseText,
+        text: chatResponse.response,
         timestamp: Date.now(),
       };
       setMessages([botMessage]);
@@ -67,7 +73,7 @@ const App: React.FC = () => {
   }, [language]);
 
   const handleSendMessage = useCallback(async (text: string) => {
-    if (!user || !language || flowState === 'completed') return;
+    if (!user || !language || flowState === 'completed' || !user.id) return;
     
     const userMessage: Message = {
       id: `user-${Date.now()}`,
@@ -93,19 +99,22 @@ const App: React.FC = () => {
         
         const updatedUser = { ...user, contactMethod: 'email' as ContactMethod, contactInfo: text };
         setUser(updatedUser);
-        await backendService.saveLead(updatedUser);
         
         const triggerMessage = locales.triggerFinalMessage[language]
           .replace('{name}', updatedUser.name)
           .replace('{email}', text);
         
-        if (!chatSession) throw new Error("Chat session not initialized");
-        const finalBotResponse = await geminiService.sendMessage(chatSession, triggerMessage);
+        const chatResponse = await backendService.sendChatMessage(
+          user.id,
+          triggerMessage,
+          language,
+          conversationId || undefined
+        );
 
         const confirmationMessage: Message = {
-            id: `bot-${Date.now()}`,
+            id: `bot-${chatResponse.messageId}`,
             sender: 'bot',
-            text: finalBotResponse,
+            text: chatResponse.response,
             timestamp: Date.now(),
         };
         setMessages(prev => [...prev, confirmationMessage]);
@@ -131,12 +140,18 @@ const App: React.FC = () => {
         return;
       }
       
-      if (!chatSession) throw new Error("Chat session not initialized");
-      const botResponseText = await geminiService.sendMessage(chatSession, text);
+      // Send message through backend
+      const chatResponse = await backendService.sendChatMessage(
+        user.id,
+        text,
+        language,
+        conversationId || undefined
+      );
+      
       const botMessage: Message = {
-        id: `bot-${Date.now()}`,
+        id: `bot-${chatResponse.messageId}`,
         sender: 'bot',
-        text: botResponseText,
+        text: chatResponse.response,
         timestamp: Date.now(),
       };
       setMessages(prev => [...prev, botMessage]);
@@ -149,10 +164,13 @@ const App: React.FC = () => {
         timestamp: Date.now(),
       };
       setMessages(prev => [...prev, errorMessage]);
+      console.error("Failed to send message:", error);
     } finally {
       setIsLoading(false);
     }
-  }, [chatSession, user, language, flowState]);
+  }, [conversationId, user, language, flowState]);
+
+ 
 
   useEffect(() => {
     if (user && messages.length > 0) {
@@ -194,38 +212,46 @@ const App: React.FC = () => {
         />
       );
     }
+    // Solo el chat principal, sin sidebar ni scroll vertical extra
     return (
-      <ChatInterface 
-        messages={messages} 
-        onSendMessage={handleSendMessage} 
-        isLoading={isLoading}
-        isCompleted={flowState === 'completed'}
-        inputPlaceholder={locales.chatInputPlaceholder[language]} 
-        completedPlaceholder={locales.chatEndedPlaceholder[language]}
-      />
+      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+        <ChatInterface 
+          messages={messages} 
+          onSendMessage={handleSendMessage} 
+          isLoading={isLoading}
+          isCompleted={flowState === 'completed'}
+          inputPlaceholder={locales.chatInputPlaceholder[language]} 
+          completedPlaceholder={locales.chatEndedPlaceholder[language]}
+        />
+      </div>
     );
   };
 
   return (
     <div className="bg-black text-white font-sans min-h-screen flex flex-col items-center justify-center p-4 selection:bg-pink-500 selection:text-white">
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap');
+        .neon-border {
+          box-shadow: 0 0 32px 8px #ec4899, 0 0 64px 16px #fff4, 0 0 8px 2px #fff8;
+          border-color: #ec4899;
+          transition: box-shadow 0.3s, border-color 0.3s;
+        }
+        .neon-border .contact-app-btn .contact-app-icon {
+          color: #a1a1aa;
+          transition: color 0.3s;
+        }
+        .neon-border:hover .contact-app-btn:hover .contact-app-icon,
+        .neon-border:focus-within .contact-app-btn:focus .contact-app-icon {
+          color: var(--brand-color) !important;
+          filter: none;
+        }
+        .chat-scroll-area {
+          max-height: 420px;
+          overflow-y: auto;
+          padding-right: 8px;
+        }
+      `}</style>
       <div className="w-full max-w-2xl h-[95vh] max-h-[800px] bg-pink-900 rounded-2xl shadow-2xl flex flex-col border-4 border-pink-500 neon-border" tabIndex={0}>
-    <style>{`
-      @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap');
-      .neon-border {
-        box-shadow: 0 0 32px 8px #ec4899, 0 0 64px 16px #fff4, 0 0 8px 2px #fff8;
-        border-color: #ec4899;
-        transition: box-shadow 0.3s, border-color 0.3s;
-      }
-      .neon-border .contact-app-btn .contact-app-icon {
-        color: #a1a1aa;
-        transition: color 0.3s;
-      }
-      .neon-border:hover .contact-app-btn:hover .contact-app-icon,
-      .neon-border:focus-within .contact-app-btn:focus .contact-app-icon {
-        color: var(--brand-color) !important;
-        filter: none;
-      }
-    `}</style>
         <header className="flex items-center p-4 border-b border-pink-700 flex-shrink-0">
           <svg className="w-10 h-10 mr-4" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-label="DevCore Group Logo">
             {/* Grey Gear */}
@@ -274,6 +300,9 @@ const App: React.FC = () => {
             </h1>
             <p className="text-sm text-pink-400 font-medium mt-1">{language ? locales.headerSubtitle[language] : 'Powered by Gemini'}</p>
           </div>
+          {/* <div style={{ marginLeft: 'auto' }}>
+            {user && <SettingsMenu user={user} onProfilePictureUpdated={handleProfilePictureUpdated} />}
+          </div> */}
         </header>
         
         <div className="flex-1 flex flex-col overflow-hidden bg-pink-900">
@@ -285,3 +314,5 @@ const App: React.FC = () => {
 };
 
 export default App;
+         
+

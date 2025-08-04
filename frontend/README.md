@@ -51,7 +51,132 @@ Este proyecto es un asistente conversacional interactivo basado en React y la AP
 ├── .gitignore
 ├── index.html               # Plantilla HTML principal
 ├── package.json             # Dependencias y scripts del proyecto
-├── README.md                # Este archivo
+├── # DevCore AI Assistant
+
+Este proyecto está separado en dos partes: Frontend (React + TypeScript) y Backend (Python + FastAPI).
+
+## Estructura del Proyecto
+
+```
+12/
+├── frontend/           # Aplicación React
+│   ├── components/
+│   ├── services/
+│   ├── types/
+│   ├── i18n/
+│   ├── constants/
+│   ├── public/
+│   ├── package.json
+│   ├── vite.config.ts
+│   └── .env
+├── backend/           # API FastAPI
+│   ├── app/
+│   │   ├── models/
+│   │   ├── schemas/
+│   │   ├── routers/
+│   │   ├── main.py
+│   │   └── database.py
+│   ├── requirements.txt
+│   ├── .env
+│   └── run.py
+└── README.md
+```
+
+## Frontend (React + TypeScript + Vite)
+
+### Configuración
+1. Navegar a la carpeta frontend:
+   ```bash
+   cd frontend
+   ```
+
+2. Instalar dependencias:
+   ```bash
+   npm install
+   ```
+
+3. Configurar variables de entorno:
+   - Copia `.env.example` a `.env`
+   - Configura tu `VITE_GEMINI_API_KEY`
+
+4. Ejecutar en desarrollo:
+   ```bash
+   npm run dev
+   ```
+
+### Scripts disponibles
+- `npm run dev` - Servidor de desarrollo
+- `npm run build` - Build para producción
+- `npm run preview` - Preview del build
+
+## Backend (Python + FastAPI)
+
+### Configuración
+1. Navegar a la carpeta backend:
+   ```bash
+   cd backend
+   ```
+
+2. Crear entorno virtual de Python:
+   ```bash
+   python -m venv venv
+   ```
+
+3. Activar entorno virtual:
+   ```bash
+   # Windows
+   venv\Scripts\activate
+   
+   # Linux/Mac
+   source venv/bin/activate
+   ```
+
+4. Instalar dependencias:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+5. Configurar variables de entorno:
+   - Copia `.env.example` a `.env`
+   - Configura tu base de datos PostgreSQL
+   - Configura tu `GEMINI_API_KEY`
+
+6. Ejecutar servidor:
+   ```bash
+   python run.py
+   ```
+
+### Base de Datos
+El backend está configurado para usar PostgreSQL. Asegúrate de:
+1. Tener PostgreSQL instalado
+2. Crear una base de datos
+3. Configurar la URL en el archivo `.env`
+
+### API Endpoints
+- `GET /` - Estado de la API
+- `GET /health` - Health check
+- `POST /api/v1/users/` - Crear usuario
+- `GET /api/v1/users/` - Listar usuarios
+- `POST /api/v1/conversations/` - Crear conversación
+- `POST /api/v1/chat/send-message` - Enviar mensaje al AI
+
+## Desarrollo
+
+1. Ejecutar backend (puerto 8000):
+   ```bash
+   cd backend
+   python run.py
+   ```
+
+2. Ejecutar frontend (puerto 5173):
+   ```bash
+   cd frontend
+   npm run dev
+   ```
+
+3. La aplicación estará disponible en `http://localhost:5173`
+4. La API estará disponible en `http://localhost:8000`
+5. Documentación de API en `http://localhost:8000/docs`                # Este archivo
 ├── tsconfig.json            # Configuración de TypeScript
 └── vite.config.ts           # Configuración de Vite
 ```
